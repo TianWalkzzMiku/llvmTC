@@ -61,6 +61,7 @@ fi
 	--shallow-clone \
 	--no-ccache \
 	--branch "main" 2>&1 | tee build.log
+	--use-good-revision
 
 # Check if the final clang binary exists or not.
 [ ! -f install/bin/clang-1* ] && {
