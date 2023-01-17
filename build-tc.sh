@@ -55,13 +55,10 @@ if [[ ! -z "${2}" ]];then
     TomTal=$(($TomTal*2))
 fi
 ./build-llvm.py \
-        --assertions \
-	--bolt \
 	--clang-vendor "$LLVM_NAME" \
 	--targets "ARM;AArch64" \
 	--defines "LLVM_PARALLEL_COMPILE_JOBS=$TomTal LLVM_PARALLEL_LINK_JOBS=$TomTal CMAKE_C_FLAGS='-g0 -O3' CMAKE_CXX_FLAGS='-g0 -O3'" \
-	--pgo "llvm" \
-	--quiet-cmake \
+	--no-ccache \
 	--branch "main" 2>&1 | tee build.log
 	--use-good-revision
 
