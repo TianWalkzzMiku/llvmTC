@@ -7,6 +7,8 @@
 # GL_TOKEN | Your Gitlab Token
 # GL_EMAIL | Your Email Address
 # GL_USERNAME | Your Username Gitlab
+# GL_PUSH_REPO_URL | Repo Push URL Gitlab Here
+# GL_PUSH_REPO_SCRIPT | Script URL Gitlab
 
 
 # Function to show an informational message
@@ -55,7 +57,6 @@ if [[ ! -z "${2}" ]];then
 fi
 ./build-llvm.py \
 	--clang-vendor "$LLVM_NAME" \
-        --projects "clang;lld;polly" \
 	--targets "ARM;AArch64" \
 	--defines "LLVM_PARALLEL_COMPILE_JOBS=$TomTal LLVM_PARALLEL_LINK_JOBS=$TomTal CMAKE_C_FLAGS='-g0 -O3' CMAKE_CXX_FLAGS='-g0 -O3'" \
 	--shallow-clone \
@@ -119,7 +120,7 @@ git commit -asm "$LLVM_NAME: Bump to $rel_date build
 LLVM commit: $llvm_commit_url
 Clang Version: $clang_version
 Binutils version: $binutils_ver
-Builder commit: https://gitlab.com/TianWalkzzMiku/scripts.git/commit/$builder_commit"
+Builder commit: https://$GL_PUSH_REPO_SCRIPT/commit/$builder_commit"
 git push -f
 popd || exit
-tg_post_msg "<b>$LLVM_NAME: Toolchain pushed to <code>https://$GH_PUSH_REPO_URL</code></b>"
+tg_post_msg "<b>$LLVM_NAME: Toolchain pushed to <code>https://$GL_PUSH_REPO_URL</code></b>"
