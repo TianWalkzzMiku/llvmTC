@@ -4,6 +4,8 @@
 # LLVM_NAME | Your desired Toolchain Name
 # TG_TOKEN | Your Telegram Bot Token
 # TG_CHAT_ID | Your Telegram Channel / Group Chat ID
+# GL_TOKEN | Your Gitlab Token
+
 
 # Function to show an informational message
 msg() {
