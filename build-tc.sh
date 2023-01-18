@@ -104,9 +104,9 @@ tg_post_msg "<b>$LLVM_NAME: Toolchain compilation Finished</b>%0A<b>Clang Versio
 
 # Push to GitHub
 # Update Git repository
-git config --global user.email "whysdevsrk@gmail.com"
-git config --global user.name "TianWalkzzMiku"
-git clone "https://gitlab.com/TianWalkzzMiku/SuperRyzen-Clang.git" rel_repo
+git config --global user.email "$GL_EMAIL"
+git config --global user.name "$GL_USERNAME"
+https://$GL_USERNAME:$GL_TOKEN@$GL_PUSH_REPO_URL" rel_repo
 pushd rel_repo || exit
 rm -fr ./*
 cp -r ../install/* .
