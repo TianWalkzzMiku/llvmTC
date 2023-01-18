@@ -56,10 +56,11 @@ if [[ ! -z "${2}" ]];then
 fi
 ./build-llvm.py \
 	--clang-vendor "$LLVM_NAME" \
+        --projects "clang;lld;polly" \
+	--targets "ARM;AArch64" \
 	--defines "LLVM_PARALLEL_COMPILE_JOBS=$TomTal LLVM_PARALLEL_LINK_JOBS=$TomTal CMAKE_C_FLAGS='-g0 -O3' CMAKE_CXX_FLAGS='-g0 -O3'" \
-	--incremental \
-	--targets "ARM;AArch64;X86" \
-	--use-good-revision
+	--shallow-clone \
+        --incremental \
 	--branch "main" 2>&1 | tee build.log
 
 # Check if the final clang binary exists or not.
