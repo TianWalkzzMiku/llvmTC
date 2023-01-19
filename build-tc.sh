@@ -116,7 +116,7 @@ cp -r ../install/* .
 git checkout README.md # keep this as it's not part of the toolchain itself
 git lfs install 
 git lfs track "libclang-cpp.so"
-git lfs track "libclang-cpp.so.16git"
+git lfs track "libclang-cpp.so.15git"
 git add .gitattributes
 git add .
 git commit -asm "$LLVM_NAME: Bump to $rel_date build
