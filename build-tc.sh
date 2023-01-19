@@ -60,7 +60,6 @@ fi
 	--targets "ARM;AArch64" \
 	--defines "LLVM_PARALLEL_COMPILE_JOBS=$TomTal LLVM_PARALLEL_LINK_JOBS=$TomTal CMAKE_C_FLAGS='-g0 -O3' CMAKE_CXX_FLAGS='-g0 -O3'" \
 	--no-ccache \
-	--use-good-revision \
 	--branch "main" 2>&1 | tee build.log
 
 # Check if the final clang binary exists or not.
@@ -116,7 +115,7 @@ cp -r ../install/* .
 git checkout README.md # keep this as it's not part of the toolchain itself
 git lfs install 
 git lfs track "libclang-cpp.so"
-git lfs track "libclang-cpp.so.15git"
+git lfs track "libclang-cpp.so.16git"
 git add .gitattributes
 git add .
 git commit -asm "$LLVM_NAME: Bump to $rel_date build
