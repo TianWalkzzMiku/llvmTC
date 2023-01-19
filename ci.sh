@@ -49,7 +49,9 @@ function do_deps() {
         python3 \
         texinfo \
         xz-utils \
-        zlib1g-dev
+        zlib1g-dev \
+        unzip \
+        zip
 }
 
 function do_kernel() {
