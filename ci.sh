@@ -50,7 +50,7 @@ function do_deps() {
         texinfo \
         xz-utils \
         zlib1g-dev \
-        git-lfs install 
+        git-lfs
 }
 
 function do_kernel() {
