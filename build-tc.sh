@@ -114,6 +114,7 @@ pushd rel_repo || exit
 rm -fr ./*
 cp -r ../install/* .
 git checkout README.md # keep this as it's not part of the toolchain itself
+git lfs install 
 git lfs track "libclang-cpp.so"
 git lfs track "libclang-cpp.so.16git"
 git add .gitattributes
