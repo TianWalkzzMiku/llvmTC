@@ -117,9 +117,6 @@ git checkout README.md # keep this as it's not part of the toolchain itself
 git lfs track "libclang-cpp.so"
 git lfs track "libclang-cpp.so.16git"
 git add .gitattributes
-git add libclang-cpp.so
-git add libclang-cpp.so.16git
-git commit -m "add .gitattributes"
 git add .
 git commit -asm "$LLVM_NAME: Bump to $rel_date build
 
