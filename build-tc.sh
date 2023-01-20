@@ -57,10 +57,10 @@ if [[ ! -z "${2}" ]];then
 fi
 ./build-llvm.py \
 	--clang-vendor "$LLVM_NAME" \
-	--targets "ARM;AArch64" \
+	--targets "ARM;AArch64;X86" \
 	--defines "LLVM_PARALLEL_COMPILE_JOBS=$TomTal LLVM_PARALLEL_LINK_JOBS=$TomTal CMAKE_C_FLAGS='-g0 -O3' CMAKE_CXX_FLAGS='-g0 -O3'" \
 	--no-ccache \
-	--shallow-clone \
+	--good-revision \
 	--branch "main" 2>&1 | tee build.log
 
 # Check if the final clang binary exists or not.
@@ -73,7 +73,7 @@ fi
 # Build binutils
 msg "$LLVM_NAME: Building binutils..."
 tg_post_msg "<b>$LLVM_NAME: Building Binutils. . .</b>"
-./build-binutils.py --targets arm aarch64
+./build-binutils.py --targets arm aarch64 x86_64
 
 # Remove unused products
 rm -fr install/include
@@ -116,7 +116,7 @@ cp -r ../install/* .
 git checkout README.md # keep this as it's not part of the toolchain itself
 git lfs install 
 git lfs track "libclang-cpp.so"
-git lfs track "libclang-cpp.so.16git"
+git lfs track "libclang-cpp.so.15git"
 git add .gitattributes
 git add .
 git commit -asm "$LLVM_NAME: Bump to $rel_date build
