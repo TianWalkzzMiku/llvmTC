@@ -114,10 +114,8 @@ pushd rel_repo || exit
 rm -fr ./*
 cp -r ../install/* .
 git checkout README.md # keep this as it's not part of the toolchain itself
-git lfs install 
-git lfs track "libclang-cpp.so"
-git lfs track "libclang-cpp.so.17git"
-git add .gitattributes
+split "libclang-cpp.so"
+split "libclang-cpp.so.17git"
 git add .
 git commit -asm "$LLVM_NAME: Bump to $rel_date build
 
