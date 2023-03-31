@@ -114,8 +114,8 @@ pushd rel_repo || exit
 rm -fr ./*
 cp -r ../install/* .
 git checkout README.md # keep this as it's not part of the toolchain itself
-split -b 100m libclang-cpp.so
-split -b 100m libclang-cpp.so.17git
+find .
+split .
 git add .
 git commit -asm "$LLVM_NAME: Bump to $rel_date build
 
