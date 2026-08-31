@@ -25,6 +25,10 @@ err() {
 # Inlined function to post a message
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
 tg_post_msg() {
+    # Check if message is empty or not set
+    if [[ -z "$1" ]]; then
+        return 0
+    fi
     curl -s -X POST "$BOT_MSG_URL" -d chat_id="$TG_CHAT_ID" \
     -d "disable_web_page_preview=true" \
     -d "parse_mode=html" \
@@ -98,7 +102,7 @@ llvm_commit_url="https://github.com/llvm/llvm-project/commit/$short_llvm_commit"
 binutils_ver="$(ls | grep "^binutils-" | sed "s/binutils-//g")"
 clang_version="$("$INSTALL_DIR/bin/clang" --version | head -n1 | cut -d' ' -f4)"
 
-tg_post_msg "<b>$LLVM_NAME: Toolchain compilation Finished</b>%0A<b>Clang Version : </b><code>$clang_version</code>%0A<b>LLVM Commit : </b><code>$llvm_commit_url</code>%0A<b>Binutils Version : </b><code>$binutils_ver</code>"
+tg_post_msg "<b>$LLVM_NAME: Toolchain compilation Finished</b>%0A<b>Clang Version : </b><code>$clang_version</code>%0A<b>LLVM Commit : </b><code>$llvm_commit_url</code>%0A<b>Binutils Version : </b><code>$binutils_ver</code>%0A"
 
 # Push to GitHub
 # Update Git repository
