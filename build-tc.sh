@@ -88,10 +88,18 @@ rm -fr "$INSTALL_DIR/include"
 rm -f "$INSTALL_DIR/lib"/*.a "$INSTALL_DIR/lib"/*.la
 
 # Strip remaining products
-find "$INSTALL_DIR" -type f -exec file {} \; | grep 'not stripped' | awk '{print $1}' | xargs -I{} strip -s {}
+while IFS= read -r -d '' f; do
+	if file "$f" | grep -q 'not stripped'; then
+		strip -s "$f"
+	fi
+done < <(find "$INSTALL_DIR" -type f -print0)
 
 # Set executable rpaths so setting LD_LIBRARY_PATH isn't necessary
-find "$INSTALL_DIR" -mindepth 2 -maxdepth 3 -type f -exec file {} \; | grep 'ELF .* interpreter' | awk '{print $1}' | xargs -I{} patchelf --set-rpath "$INSTALL_DIR/lib" {}
+while IFS= read -r -d '' f; do
+	if file "$f" | grep -q 'ELF .* interpreter'; then
+		patchelf --set-rpath "$INSTALL_DIR/lib" "$f"
+	fi
+done < <(find "$INSTALL_DIR" -mindepth 2 -maxdepth 3 -type f -print0)
 
 # Release Info
 cd llvm-project || exit
@@ -114,9 +122,19 @@ GL_PUSH_REPO_URL="${GL_PUSH_REPO_URL#https://}"
 GL_PUSH_REPO_URL="${GL_PUSH_REPO_URL#http://}"
 git clone "https://$GL_USERNAME:$GL_TOKEN@$GL_PUSH_REPO_URL" rel_repo
 cd rel_repo || exit
+
+# Ensure git-lfs is available (GitLab rejects blobs over its free-tier size limit,
+# so large toolchain binaries must go through LFS instead of regular git objects)
+command -v git-lfs >/dev/null 2>&1 || sudo apt-get update -qq && sudo apt-get install -y -qq git-lfs
+git lfs install --local
+
 rm -fr ./*
 cp -r "$INSTALL_DIR"/* .
 git checkout README.md # keep this as it's not part of the toolchain itself
+
+# Track large binary artifacts with LFS to avoid GitLab's per-blob size limit
+git lfs track "bin/*" "lib/*.so*" "lib/*.a" "libexec/*" 2>/dev/null
+git add .gitattributes
 git add .
 git commit -asm "$LLVM_NAME: Bump to $rel_date build
 
