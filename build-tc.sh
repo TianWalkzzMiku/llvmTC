@@ -36,11 +36,11 @@ tg_post_msg() {
 }
 
 tg_post_build() {
-    curl --progress-bar -F document=@"$1" "$BOT_MSG_URL" \
-    -F chat_id="$TG_CHAT_ID"  \
-    -F "disable_web_page_preview=true" \
-    -F "parse_mode=html" \
-    -F caption="$3"
+ curl --progress-bar -F document=@"$1" "https://api.telegram.org/bot$TG_TOKEN/sendDocument" \
+  -F chat_id="$2" \
+  -F "disable_web_page_preview=true" \
+  -F "parse_mode=html" \
+  -F caption="$3"
 }
 
 # Build Info
