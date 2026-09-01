@@ -4,11 +4,11 @@
 # LLVM_NAME | Your desired Toolchain Name
 # TG_TOKEN | Your Telegram Bot Token
 # TG_CHAT_ID | Your Telegram Channel / Group Chat ID
-# GH_TOKEN | Your Github Token
-# GH_EMAIL | Your Email Address
-# GH_USERNAME | Your Username Github
-# GH_PUSH_REPO_URL | Repo Push URL Github Here
-# GH_PUSH_REPO_SCRIPT | Script URL Github
+# GL_TOKEN | Your GitLab Personal Access Token (scope: write_repository)
+# GL_EMAIL | Your GitLab account email
+# GL_USERNAME | Your GitLab username
+# GL_PUSH_REPO_URL | GitLab repo URL to push toolchain to (e.g. gitlab.com/username/repo.git)
+# GH_PUSH_REPO_SCRIPT | GitHub URL of this build script's own repo (for commit links)
 
 # Directory where LLVM toolchain is installed
 INSTALL_DIR="/home/runner/work/llvmTC/llvmTC/install"
@@ -105,11 +105,14 @@ clang_version="$("$INSTALL_DIR/bin/clang" --version | head -n1 | cut -d' ' -f4)"
 # Build completion message
 tg_post_msg "<b>$LLVM_NAME: Toolchain compilation Finished</b>%0A<b>Clang Version : </b><code>$clang_version</code>%0A<b>LLVM Commit : </b><code>$short_llvm_commit</code>%0A<b>Binutils Version : </b><code>$binutils_ver</code>"
 
-# Push to GitHub
+# Push to GitLab
 # Update Git repository
-git config --global user.email "$GH_EMAIL"
-git config --global user.name "$GH_USERNAME"
-git clone "https://$GH_USERNAME:$GH_TOKEN@$GH_PUSH_REPO_URL" rel_repo
+git config --global user.email "$GL_EMAIL"
+git config --global user.name "$GL_USERNAME"
+# Strip any existing scheme from GL_PUSH_REPO_URL to avoid a doubled "https://" prefix
+GL_PUSH_REPO_URL="${GL_PUSH_REPO_URL#https://}"
+GL_PUSH_REPO_URL="${GL_PUSH_REPO_URL#http://}"
+git clone "https://$GL_USERNAME:$GL_TOKEN@$GL_PUSH_REPO_URL" rel_repo
 cd rel_repo || exit
 rm -fr ./*
 cp -r "$INSTALL_DIR"/* .
@@ -125,4 +128,4 @@ Builder commit: https://$GH_PUSH_REPO_SCRIPT/commit/$builder_commit"
 git push -f
 cd ..
 
-tg_post_msg "<b>$LLVM_NAME: Toolchain pushed to <code>https://$GH_PUSH_REPO_URL</code></b>"
+tg_post_msg "<b>$LLVM_NAME: Toolchain pushed to <code>https://$GL_PUSH_REPO_URL</code></b>"
