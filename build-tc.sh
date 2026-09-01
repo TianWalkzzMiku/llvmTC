@@ -15,32 +15,32 @@ INSTALL_DIR="/home/runner/work/llvmTC/llvmTC/install"
 
 # Function to show an informational message
 msg() {
-    echo -e "\e[1;32m$*\e[0m"
+	echo -e "\e[1;32m$*\e[0m"
 }
 
 err() {
-    echo -e "\e[1;41m$*\e[0m"
+	echo -e "\e[1;41m$*\e[0m"
 }
 
 # Inlined function to post a message
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
 tg_post_msg() {
-    # Check if message is empty or not set
-    if [[ -z "$1" ]]; then
-        return 0
-    fi
-    curl -s -X POST "$BOT_MSG_URL" -d chat_id="$TG_CHAT_ID" \
-    -d "disable_web_page_preview=true" \
-    -d "parse_mode=html" \
-    -d text="$1"
+	# Check if message is empty or not set
+	if [[ -z "$1" ]]; then
+		return 0
+	fi
+	curl -s -X POST "$BOT_MSG_URL" -d chat_id="$TG_CHAT_ID" \
+		-d "disable_web_page_preview=true" \
+		-d "parse_mode=html" \
+		-d text="$1"
 }
 
 tg_post_build() {
- curl --progress-bar -F document=@"$1" "https://api.telegram.org/bot$TG_TOKEN/sendDocument" \
-  -F chat_id="$2" \
-  -F "disable_web_page_preview=true" \
-  -F "parse_mode=html" \
-  -F caption="$3"
+	curl --progress-bar -F document=@"$1" "https://api.telegram.org/bot$TG_TOKEN/sendDocument" \
+		-F chat_id="$2" \
+		-F "disable_web_page_preview=true" \
+		-F "parse_mode=html" \
+		-F caption="$3"
 }
 
 # Build Info
@@ -54,27 +54,28 @@ tg_post_msg "<b>$LLVM_NAME: Toolchain Compilation Started</b>%0A<b>Date : </b><c
 # Build LLVM
 msg "$LLVM_NAME: Building LLVM..."
 tg_post_msg "<b>$LLVM_NAME: Building LLVM. . .</b>"
+
 TomTal=$(nproc)
 if [[ ! -z "${2}" ]]; then
-    TomTal=$(($TomTal*2))
+	TomTal=$(($TomTal*2))
 fi
 
 # Ensure LLVM binaries directory is in PATH
 export PATH="$INSTALL_DIR/bin:$PATH"
 
 ./build-llvm.py \
-    --clang-vendor "$LLVM_NAME" \
-    --targets "ARM;AArch64;X86" \
-    --defines "LLVM_PARALLEL_COMPILE_JOBS=$TomTal LLVM_PARALLEL_LINK_JOBS=$TomTal CMAKE_C_FLAGS='-g0 -O3' CMAKE_CXX_FLAGS='-g0 -O3'" \
-    --no-ccache \
-    --shallow-clone \
-    --branch "main" 2>&1 | tee build.log
+	--clang-vendor "$LLVM_NAME" \
+	--targets "ARM;AArch64;X86" \
+	--defines "LLVM_PARALLEL_COMPILE_JOBS=$TomTal LLVM_PARALLEL_LINK_JOBS=$TomTal CMAKE_C_FLAGS='-g0 -O3' CMAKE_CXX_FLAGS='-g0 -O3'" \
+	--no-ccache \
+	--shallow-clone \
+	--branch "main" 2>&1 | tee build.log
 
 # Check if the final clang binary exists or not
-if [[ ! -f "$INSTALL_DIR/bin/clang-1"* ]]; then
-    err "Building LLVM failed! Kindly check errors!!"
-    tg_post_build "build.log" "$TG_CHAT_ID" "Error Log"
-    exit 1
+if [[ ! -f "$INSTALL_DIR/bin/clang" ]]; then
+	err "Building LLVM failed! Kindly check errors!!"
+	tg_post_build "build.log" "$TG_CHAT_ID" "Error Log"
+	exit 1
 fi
 
 # Build binutils
@@ -97,7 +98,6 @@ cd llvm-project || exit
 llvm_commit="$(git rev-parse HEAD)"
 short_llvm_commit="$(cut -c-8 <<< "$llvm_commit")"
 cd ..
-
 llvm_commit_url="https://github.com/llvm/llvm-project/commit/$short_llvm_commit"
 binutils_ver="$(ls | grep "^binutils-" | sed "s/binutils-//g")"
 clang_version="$("$INSTALL_DIR/bin/clang" --version | head -n1 | cut -d' ' -f4)"
@@ -120,7 +120,9 @@ git commit -asm "$LLVM_NAME: Bump to $rel_date build
 LLVM commit: $llvm_commit_url
 Clang Version: $clang_version
 Binutils version: $binutils_ver
+
 Builder commit: https://$GH_PUSH_REPO_SCRIPT/commit/$builder_commit"
 git push -f
 cd ..
+
 tg_post_msg "<b>$LLVM_NAME: Toolchain pushed to <code>https://$GH_PUSH_REPO_URL</code></b>"
